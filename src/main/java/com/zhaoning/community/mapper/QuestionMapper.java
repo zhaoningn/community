@@ -16,7 +16,7 @@ import java.util.List;
 @Mapper
 public interface QuestionMapper {
 
-    @Insert("insert into question (id,title,description,gmt_create,gmt_modified,creater,view_count,like_count,tag) values (#{id},#{title},#{description},#{gmt_create},#{gmt_modified},#{creater},#{view_count},#{like_count},#{tag})")
+    @Insert("insert into question (id,title,description,gmt_create,gmt_modified,creater,view_count,like_count,tag,comment_count) values (#{id},#{title},#{description},#{gmt_create},#{gmt_modified},#{creater},#{view_count},#{like_count},#{tag},#{comment_count})")
     void CreateQuestion(Question question);
 
     @Select("select * from question")

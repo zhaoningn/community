@@ -26,15 +26,9 @@ public class PaginationDTO {
     private Integer totalpage;
 
 
-    public void setPagination(Integer totalCount, Integer page, Integer size) {
+    public void setPagination(Integer totalpage, Integer page) {
+        this.totalpage=totalpage;
         this.page=page;
-
-        if(totalCount %size==0){
-            totalpage = totalCount/size;
-        }else{
-            totalpage = totalCount/size +1;
-        }
-
 
 
         pages.add(page);
@@ -46,8 +40,6 @@ public class PaginationDTO {
                 pages.add(page+i);
             }
         }
-
-
         //是否展示上一页
         if(page == 1){
             showPrevious = false;

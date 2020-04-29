@@ -5,6 +5,7 @@ import com.zhaoning.community.dto.GithubUser;
 import com.zhaoning.community.mapper.UserMapper;
 import com.zhaoning.community.model.User;
 import com.zhaoning.community.provider.GithubProvider;
+import com.zhaoning.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -36,7 +37,7 @@ public class AuthorizeController {
     private String clientUrl;
 
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name="code") String code,
@@ -61,20 +62,25 @@ public class AuthorizeController {
             user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccount_id(String.valueOf(githubUser.getId()));
-            user.setGmt_create(System.currentTimeMillis());
-            user.setGmt_modified(user.getGmt_create());
             user.setAvatar_url(githubUser.getAvatar_url());
-            userMapper.insert(user);
-
+            userService.createOrUpdate(user);
             response.addCookie(new Cookie("token",token));
-
             return "redirect:/";
         }else {
             //登录失败
             return "redirect:/";
         }
-
-
         
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response){
+        request.getSession().removeAttribute("user");
+        Cookie cookie = new Cookie("token",null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/";
+
     }
 }

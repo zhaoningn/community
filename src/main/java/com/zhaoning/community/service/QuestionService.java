@@ -30,7 +30,6 @@ public class QuestionService {
         PaginationDTO paginationDTO = new PaginationDTO();
         Integer totalpage;
         Integer totalCount = questionMapper.count();
-
         if(totalCount %size==0){
             totalpage = totalCount/size;
         }else{
@@ -107,5 +106,14 @@ public class QuestionService {
 
 
         return paginationDTO;
+    }
+
+    public QuestionDTO getQuestionByid(Integer id) {
+        Question question= questionMapper.getQuestionById(id);
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(question,questionDTO);
+        User user = userMapper.findById(question.getCreater());
+        questionDTO.setUser(user);
+        return questionDTO;
     }
 }

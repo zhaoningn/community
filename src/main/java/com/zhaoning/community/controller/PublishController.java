@@ -1,13 +1,16 @@
 package com.zhaoning.community.controller;
 
+import com.zhaoning.community.dto.QuestionDTO;
 import com.zhaoning.community.mapper.QuestionMapper;
 import com.zhaoning.community.mapper.UserMapper;
 import com.zhaoning.community.model.Question;
 import com.zhaoning.community.model.User;
+import com.zhaoning.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import sun.misc.Request;
@@ -25,6 +28,9 @@ public class PublishController {
     @Autowired
     private QuestionMapper questionMapper;
 
+    @Autowired
+    private QuestionService questionService;
+
 
     @GetMapping("/publish")
     public String publish(){
@@ -33,11 +39,27 @@ public class PublishController {
 
 
 
+
+
+    @GetMapping("/publish/{id}")
+    public String modify(@PathVariable(name = "id") Integer id,
+                         Model model){
+        QuestionDTO question = questionService.getQuestionByid(id);
+        model.addAttribute("title",question.getTitle());
+        model.addAttribute("description",question.getDescription());
+        model.addAttribute("tag",question.getTag());
+        model.addAttribute("id",question.getId());
+
+        return "/publish";
+
+    }
+
     @PostMapping("/publish")
     public String doPublish(
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("tag") String tag,
+            @RequestParam("id") Integer id,
             HttpServletRequest  request,
             Model model){
 
@@ -74,9 +96,9 @@ public class PublishController {
             return "publish";
         }
         question.setCreater(user.getId());
-        question.setGmt_create(System.currentTimeMillis());
-        question.setGmt_modified(question.getGmt_create());
-        questionMapper.CreateQuestion(question);
+        question.setId(id);
+        questionService.CreatOrUpdate(question);
+
         return "redirect:/";
     }
 }
